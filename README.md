@@ -1,5 +1,6 @@
 # Team-183-Backend
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6c9d7de398b64a68bf8446209a78f342)](https://app.codacy.com/gh/BuildForSDG/Team-183-Backend?utm_source=github.com&utm_medium=referral&utm_content=BuildForSDG/Team-183-Backend&utm_campaign=Badge_Grade_Settings)
 
 ## About
