@@ -26,15 +26,18 @@ def validate_user_data(user):
         return {'warning': 'password mismatch!'}, 400
 
     # Check for a valid user name
-    if not re.match(r'^[a-zA-Z0-9_.+-]+$', user['username'].strip(' ')):
+    if not re.match(
+        r'^[a-zA-Z0-9_.+-]+$',
+            user['username'].strip(' ')):
         return {'warning': 'Enter a valid username'}, 400
 
     if user['username'].strip(' ').isdigit():
         return {'warning': 'Enter a non digit username'}, 400
 
     # Check for a valid email
-    if not re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)",
-                    user['email'].strip(' ')):
+    if not re.match(
+        r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)",
+            user['email'].strip(' ')):
         return {'warning': 'Enter a valid email address'}, 400
 
     # check for a valid password

@@ -1,12 +1,17 @@
 # local imports
 from ..utils.validators import validate_user_data
-from ..utils.udto import register_parser, login_parser
-from ..models.user_model import register_model, auth_ns, login_model
+from ..utils.udto import register_parser, login_parser, forgot_password_parser
+from ..models.user_model import (
+    register_model, auth_ns,
+    login_model,
+    forgot_password_model)
+from ..utils.helpers import send_forgot_password_email
 
 # third-party imports
 from flask_restx import Resource
 from datetime import datetime
 from flask_jwt_extended import create_access_token
+import uuid
 
 
 @auth_ns.route("/signup")
@@ -96,3 +101,37 @@ class LoginUser(Resource):
             return {"warning": "No user found. Please sign up"}, 401
         return {
             "warning": "'username' and 'password' are required fields"}, 400
+
+
+@auth_ns.route("/forgot-password")
+class UserForgotPassword(Resource):
+
+    @auth_ns.expect(forgot_password_model)
+    @auth_ns.doc("user login")
+    @auth_ns.response(400, "Bad Request")
+    @auth_ns.response(401, "Unauthorized")
+    def post(self):
+        """Sends new password to your mail."""
+        # data = request.get_json()
+        data = forgot_password_parser.parse_args()
+
+        # local import
+        from manage import mongo, bcrypt
+        users = mongo.db.users
+
+        user = users.find_one({'email': data['email']})
+
+        # check if email is taken
+        if user and user['email']:
+
+            new_password = uuid.uuid4().hex.upper()[0:6]
+            hash_password = bcrypt.generate_password_hash(
+                new_password).decode('utf-8')
+            user['password'] = hash_password
+            users.save(user)
+
+            send_forgot_password_email([user['email']], new_password)
+            return {
+                'message': 'Email has been sent with new password'}, 200
+
+        return {'warning': 'No user exists with that email'}, 409

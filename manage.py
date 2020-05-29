@@ -11,6 +11,7 @@ from flask_jwt_extended import JWTManager
 from flask_script import Manager
 from decouple import config
 import unittest
+from flask_mail import Mail
 
 
 # application development instance
@@ -23,6 +24,7 @@ mongo = PyMongo(app)
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 manager = Manager(app)
+mail = Mail(app)
 CORS(app)
 
 

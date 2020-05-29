@@ -28,11 +28,11 @@ How would someone use what you have built, include URLs to the deployed app, ser
 
 ### Auth Endpoints Version 1
 
-**EndPoint** | **Functionality**
---- | ---
-POST  `/api/v1/auth/signup` | Register a user
-POST  `/api/v1/auth/login` | Logs in a user
-
+| **EndPoint**                         | **Functionality**    |
+| ------------------------------------ | -------------------- |
+| POST `/api/v1/users/signup`          | Register a user      |
+| POST `/api/v1/users/login`           | Logs in a user       |
+| POST `/api/v1/users/forgot-password` | User forgot password |
 
 ## Setup
 
@@ -92,13 +92,27 @@ All tests should be written in the `tests` folder. tests/test_src.py is a sample
 -   Run your project:
     `poetry run app` or `python manage.py runserver`
 
+Set environment variables for in the format proscribed in the `.env.example` file
+
+> `JWT_SECRET_KEY` is your secret key
+> `FLASK_ENV` is the enviroment you are running on. Should be either `Production`, `Development` or `Testing`. NOTE: its case sensitive
+
+> `GMAIL_MAIL` > `GMAIL_USERNAME` > `GMAIL_PASSWORD` > `MAIL_SERVER` > `MAIL_PORT` > `MAIL_USE_TLS`
+
+> `MONGO_URI` which is in uri format on localhost is `'mongodb://localhost:27017/reactloginreg'`
+> for `MONGO_URI_TEST` or `MONGO_URI_DEV` or `MONGO_URI_PROD`
+
+> `MONGO_DBNAME` the name of the app database
+
 ## API Documentation
 
 Once app server is running you can view API documentation locally from
+
 ```
-http://localhost:5000/ 
+http://localhost:5000/
 ```
-*VERSION 1* on HEROKU the [API documentation here](https://chicken-farm-ke.herokuapp.com/)
+
+_VERSION 1_ on HEROKU the [API documentation here](https://chicken-farm-ke.herokuapp.com/)
 
 ## Authors
 
@@ -106,7 +120,6 @@ http://localhost:5000/
 2\. Osumgba Chiamaka - Mentor <https://github.com/osumgbachiamaka>.  
 3\. Adele Gikonyo - <https://github.com/adelewg>.  
 4\. Salma - Team Coordinator. <https://github.com/SalmaQueen>.
-
 
 ## Contributing
 
