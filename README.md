@@ -6,8 +6,8 @@
 ## About
 
 What is this project about. Ok to enrich here or the section above it with an image.
+The project is about promoting chicken farming with the sustainable development goal(SDG) of ending hunger by 2030 globally.
 
-Once this repo has been setup on Codacy by the TTL, replace the above badge with the actual one from the Codacy dashboard, and add the code coverage badge as well. This is mandatory
 
 This is a simple python starter repo template for setting up your project. The setup contains:
 
@@ -17,11 +17,22 @@ This is a simple python starter repo template for setting up your project. The s
 
 ## Why
 
-Talk about what problem this solves, what SDG(s) and SGD targets it addresses and why these are important
+The problem this solves, SDG(s) and SGD targets it addresses and why these are important
+This application has the goal of solving the SDG problem of Hunger with a target to end hunger and malnutrition by 2030 through deliberate and well calculated promotion of chicken farming that is not only an affordable investment but easy to adopt and practice widely.
+Our aim is to encourage chicken farming by connecting these chicken farmers to vendor-markets who are either individual vendors, consumers or resturants.
+These platform also has an additional interractive features where different types of users would come together and blog for instance the consumers who would likely blog on their favorite chicken recipes. Separately vendors would blog about areas of interest to them like rating and analyzing the supply chains.
 
-## Usage
+## API Usage
 
 How would someone use what you have built, include URLs to the deployed app, service e.t.c when you have it setup
+
+### Auth Endpoints Version 1
+
+**EndPoint** | **Functionality**
+--- | ---
+POST  `/api/v1/auth/signup` | Register a user
+POST  `/api/v1/auth/login` | Logs in a user
+
 
 ## Setup
 
@@ -29,11 +40,11 @@ You should have **Python 3.5+** and **git** installed.
 
 1.  Clone the repo you've created from the template herein and change into the directory
 
-    `git clone <Your Repository>`
+    `git clone https://github.com/BuildForSDG/Team-183-Backend.git
 
 2.  Change into repo directory
 
-    `cd python-starter`
+    `cd Team-183-Backend`
 
 3.  Install poetry, a dependecy manager for python.
 
@@ -56,7 +67,7 @@ You should have **Python 3.5+** and **git** installed.
 
 4.  With poetry installed, you should install project dependecies by running:
 
-    `poetry install`
+    `poetry install` or `pip install -r requirements.txt`
 
     This will install pytest for running tests and flake8, linter for your project.
 
@@ -79,11 +90,23 @@ All tests should be written in the `tests` folder. tests/test_src.py is a sample
     `poetry add --dev <dev-dependency>`
 
 -   Run your project:
-    `poetry run app`
+    `poetry run app` or `python manage.py runserver`
+
+## API Documentation
+
+Once app server is running you can view API documentation locally from
+```
+http://localhost:5000/ 
+```
+*VERSION 1* on HEROKU the [API documentation here](https://chicken-farm-ke.herokuapp.com/)
 
 ## Authors
 
-List the team behind this project. Their names linked to their Github, LinkedIn, or Twitter accounts should siffice. Ok to signify the role they play in the project, including the TTL and mentor
+1\. Daniel Kamar - Team Lead <https://github.com/koitoror>.  
+2\. Osumgba Chiamaka - Mentor <https://github.com/osumgbachiamaka>.  
+3\. Adele Gikonyo - <https://github.com/adelewg>.  
+4\. Salma - Team Coordinator. <https://github.com/SalmaQueen>.
+
 
 ## Contributing
 

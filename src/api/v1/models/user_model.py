@@ -20,3 +20,13 @@ register_model = auth_ns.model(
         'confirm': fields.String(
             required=True, description='password', example='johndoe123')
     })
+
+login_model = auth_ns.model(
+    'login_user', {
+
+        'email': fields.String(
+            required=True, description='email address',
+            example='johndoe@gmail.com'),
+        'password': fields.String(
+            required=True, description='password', example='johndoe123')
+    })

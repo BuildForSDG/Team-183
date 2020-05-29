@@ -12,3 +12,7 @@ register_parser.add_argument(
     'password', required=True, help='password should be a string')
 register_parser.add_argument(
     'confirm', required=True, help='password should be a string')
+
+login_parser = register_parser.copy()
+login_parser.remove_argument('username')
+login_parser.remove_argument('confirm')
