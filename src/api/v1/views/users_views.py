@@ -1,11 +1,12 @@
 # local imports
 from ..utils.validators import validate_user_data
-from ..utils.udto import register_parser
-from ..models.user_model import register_model, auth_ns
+from ..utils.udto import register_parser, login_parser
+from ..models.user_model import register_model, auth_ns, login_model
 
 # third-party imports
 from flask_restx import Resource
 from datetime import datetime
+from flask_jwt_extended import create_access_token
 
 
 @auth_ns.route("/signup")
@@ -54,3 +55,44 @@ class UserRegister(Resource):
         return {
             "warning":
             "User already exists. Please login or register."}, 400
+
+
+@auth_ns.route("/login")
+class LoginUser(Resource):
+
+    "Class for logging in a user"
+
+    @auth_ns.expect(login_model)
+    @auth_ns.doc("user login")
+    @auth_ns.response(400, "Bad Request")
+    @auth_ns.response(401, "Unauthorized")
+    def post(self):
+        """Handles logging the user."""
+        args = login_parser.parse_args()
+
+        # local import
+        from manage import mongo, bcrypt
+        users = mongo.db.users
+
+        if args["email"] and args["password"]:
+            user = users.find_one({'email': args['email']})
+
+            if user:
+
+                if not bcrypt.check_password_hash(
+                        user['password'], args["password"]):
+
+                    return {"warning": "Invalid password"}, 400
+
+                access_token = create_access_token(identity={
+                    'email': user['email']
+                })
+                return {
+                    "message": "Logged in successfully",
+                    'token': access_token,
+                    # "admin": user["admin"],
+                }
+
+            return {"warning": "No user found. Please sign up"}, 401
+        return {
+            "warning": "'username' and 'password' are required fields"}, 400
