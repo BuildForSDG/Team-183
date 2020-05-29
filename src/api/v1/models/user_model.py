@@ -30,3 +30,11 @@ login_model = auth_ns.model(
         'password': fields.String(
             required=True, description='password', example='johndoe123')
     })
+
+forgot_password_model = auth_ns.model(
+    'forgot_password', {
+
+        'email': fields.String(
+            required=True, description='email address',
+            example='johndoe@gmail.com'),
+    })

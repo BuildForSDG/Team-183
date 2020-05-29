@@ -13,6 +13,16 @@ class Config(object):
     JWT_SECRET_KEY = config('JWT_SECRET_KEY')
     ERROR_404_HELP = False
 
+    MAIL_SERVER = config('MAIL_SERVER')
+    MAIL_PORT = config('MAIL_PORT')
+    MAIL_DEFAULT_SENDER = config('Admin', 'GMAIL_MAIL')
+    MAIL_USERNAME = config('GMAIL_USERNAME')
+    MAIL_PASSWORD = config('GMAIL_PASSWORD')
+    MAIL_ASCII_ATTACHMENTS = False
+    MAIL_USE_TLS = False
+    MAIL_USE_SSL = True
+    MAIL_SUPPRESS_SEND = True
+
 
 class DevelopmentConfig(Config):
 
