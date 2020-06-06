@@ -14,10 +14,11 @@ register_parser.add_argument(
     'confirm', required=True, help='password should be a string')
 
 login_parser = register_parser.copy()
-
 login_parser.remove_argument('username')
 login_parser.remove_argument('confirm')
 
 forgot_password_parser = login_parser.copy()
-
 forgot_password_parser.remove_argument('password')
+
+reset_parser = register_parser.copy()
+reset_parser.remove_argument('username')

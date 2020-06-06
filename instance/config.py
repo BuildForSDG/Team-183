@@ -15,7 +15,9 @@ class Config(object):
 
     MAIL_SERVER = config('MAIL_SERVER')
     MAIL_PORT = config('MAIL_PORT')
-    MAIL_DEFAULT_SENDER = config('Admin', 'GMAIL_MAIL')
+    # MAIL_DEFAULT_SENDER = config('Admin', 'GMAIL_MAIL')
+    MAIL_DEFAULT_SENDER = config('GMAIL_MAIL')
+
     MAIL_USERNAME = config('GMAIL_USERNAME')
     MAIL_PASSWORD = config('GMAIL_PASSWORD')
     MAIL_ASCII_ATTACHMENTS = False
@@ -32,6 +34,7 @@ class DevelopmentConfig(Config):
     MODE = "development"
     # DATABASE_URL = config("MONGO_URI_DEV")
     MONGO_URI = config("MONGO_URI_DEV")
+    # FRONTEND_HOST = config("FRONTEND_HOST_DEV")
 
 
 class TestingConfig(Config):
@@ -43,6 +46,7 @@ class TestingConfig(Config):
     MODE = "testing"
     # DATABASE_URL = config("TEST_DB_URL")
     MONGO_URI = config("MONGO_URI_TEST")
+    # FRONTEND_HOST = config("FRONTEND_HOST_TEST")
 
 
 class ProductionConfig(Config):
@@ -51,6 +55,7 @@ class ProductionConfig(Config):
     DEBUG = False
     # DATABASE_URL = config("PROD_DB_URL")
     MONGO_URI = config("MONGO_URI_PROD")
+    # FRONTEND_HOST = config("FRONTEND_HOST_PROD")
 
 
 app_config = {

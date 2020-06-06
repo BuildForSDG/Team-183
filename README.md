@@ -33,6 +33,7 @@ How would someone use what you have built, include URLs to the deployed app, ser
 | POST `/api/v1/users/signup`          | Register a user      |
 | POST `/api/v1/users/login`           | Logs in a user       |
 | POST `/api/v1/users/forgot-password` | User forgot password |
+| POST `/api/v1/users/reset-password`  | User reset password  |
 
 ## Setup
 
