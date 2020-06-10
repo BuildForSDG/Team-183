@@ -1,5 +1,8 @@
 # local imports
-from ..utils.validators import validate_user_data, validate_reset_user_data
+from ..utils.validators import (
+    validate_user_data,
+    validate_reset_user_data,
+    validate_profile_data)
 from ..utils.udto import (
     register_parser,
     login_parser,
@@ -114,6 +117,7 @@ class LoginUser(Resource):
                 if not user['profile_completed']:
 
                     access_token = create_access_token(identity={
+                        'username': user['username'],
                         'email': user['email'],
                     })
                     return {
@@ -243,9 +247,9 @@ class LoggedInUserProfile(Resource):
         file_to_upload = user_profile['image']
         print(file_to_upload)
 
-        # invalid_data = validate_user_data(user_profile)
-        # if invalid_data:
-        #     return invalid_data
+        invalid_data = validate_profile_data(user_profile)
+        if invalid_data:
+            return invalid_data
 
         # local import
         from manage import mongo
@@ -254,7 +258,7 @@ class LoggedInUserProfile(Resource):
 
         if user:
 
-            thumbnail_url = ''
+            thumbnail_url = 'https://res.cloudinary.com/daniel2019/image/upload/c_fill,h_100,w_100/lulihiitm8tp4npblsgh.jpg'
             if user_profile['image_url']:
                 thumbnail_url = user_profile['image_url']
 
