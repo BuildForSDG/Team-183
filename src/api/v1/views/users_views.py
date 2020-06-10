@@ -4,7 +4,8 @@ from ..utils.udto import (
     register_parser,
     login_parser,
     forgot_password_parser,
-    reset_parser)
+    reset_parser,
+    profile_parser)
 from ..utils.mail_services import (
     send_forgot_password_email,
     send_confirm_reset_password_email)
@@ -13,13 +14,24 @@ from ..models.user_model import (
     auth_ns,
     login_model,
     forgot_password_model,
-    reset_model)
+    reset_model,
+    profile_model)
 
 # third-party imports
 from flask_restx import Resource
 from datetime import datetime, timedelta
 from flask_jwt_extended import create_access_token
 from decouple import config
+import cloudinary as Cloud
+from cloudinary.uploader import upload
+from cloudinary.utils import cloudinary_url
+
+
+Cloud.config.update = ({
+    'cloud_name': config('CLOUDINARY_CLOUD_NAME'),
+    'api_key': config('CLOUDINARY_API_KEY'),
+    'api_secret': config('CLOUDINARY_API_SECRET')
+})
 
 
 @auth_ns.route("/signup")
@@ -56,7 +68,8 @@ class RegisterUser(Resource):
                 'username': username,
                 'email': email,
                 'password': hash_password,
-                'created': created
+                'created': created,
+                'profile_completed': False
             })
 
             new_user = users.find_one({'_id': user_id})
@@ -97,18 +110,41 @@ class LoginUser(Resource):
 
                     return {"warning": "Invalid password"}, 200
 
+                # print (user['profile_completed'])
+                if not user['profile_completed']:
+
+                    access_token = create_access_token(identity={
+                        'email': user['email'],
+                    })
+                    return {
+                        "message": "Logged in successfully",
+                        'token': access_token,
+                    }
+
                 access_token = create_access_token(identity={
-                    # 'email': user['email'],
-                    # 'email': user['email'],
-                    # 'username': user['username'],
+
+                    'first_name': user['first_name'],
+                    'last_name': user['last_name'],
+                    'username': user['username'],
                     'email': user['email'],
+                    'phone_number': user['phone_number'],
+                    'address': user['address'],
+
+                    'is_farmer': user['is_farmer'],
+                    'is_vendor': user['is_vendor'],
+
+                    'city': user['city'],
+                    'country': user['country'],
+                    'postal_code': user['postal_code'],
+                    'bio': user['bio'],
+
+                    'profile_completed': user['profile_completed'],
+                    'image_url': user['image_url']
                 })
+
                 return {
                     "message": "Logged in successfully",
                     'token': access_token,
-                    # "is_farmer": user["is_farmer"],
-                    # "is_restaurant": user["is_farmer"],
-                    # "is_vendor": user["is_farmer"],
                 }
 
             return {"warning": "No user found. Please sign up"}, 200
@@ -152,7 +188,7 @@ class UserForgotPassword(Resource):
                 'message': 'Email has been sent to ' +
                 user['email'] + ' with new password reset link'}, 200
 
-        return {'warning': 'No user exists with that email'}, 409
+        return {'warning': 'No user exists with that email'}, 200
 
 
 @auth_ns.route('/reset-password')
@@ -187,5 +223,101 @@ class UserResetPassword(Resource):
         send_confirm_reset_password_email(
             [user['email']], new_password)
 
-        return {'message': 'Password updated for ' + \
-            user['email'] + '. Check your Email for updated credentials'}, 200
+        return {'message': 'Password updated for ' +
+                user['email'] + '. Check your Email for updated credentials'}, 200
+
+
+@auth_ns.route("/profile")
+class LoggedInUserProfile(Resource):
+
+    "Class for display and edit a logged in user profile"
+
+    @auth_ns.expect(profile_model)
+    @auth_ns.doc("user profile")
+    @auth_ns.response(400, "Bad Request")
+    @auth_ns.response(401, "Unauthorized")
+    def patch(self):
+        """Handles editing a logged in user profile."""
+        user_profile = profile_parser.parse_args()
+        # file_to_upload = ''
+        file_to_upload = user_profile['image']
+        print(file_to_upload)
+
+        # invalid_data = validate_user_data(user_profile)
+        # if invalid_data:
+        #     return invalid_data
+
+        # local import
+        from manage import mongo
+        users = mongo.db.users
+        user = users.find_one({'email': user_profile['email']})
+
+        if user:
+
+            thumbnail_url = ''
+            if user_profile['image_url']:
+                thumbnail_url = user_profile['image_url']
+
+            if file_to_upload:
+                upload_result = upload(file_to_upload)
+                thumbnail_url1, options = cloudinary_url(
+                    upload_result['public_id'],
+                    format="jpg",
+                    crop="fill",
+                    width=100,
+                    height=100)
+                thumbnail_url = thumbnail_url1
+
+                thumbnail_url2, options = cloudinary_url(
+                    upload_result['public_id'],
+                    format="jpg",
+                    crop="fill",
+                    width=200,
+                    height=100,
+                    radius=20,
+                    effect="sepia")
+                thumbnail_pixelate, options = cloudinary_url(
+                    upload_result['public_id'],
+                    format="jpg",
+                    crop="fill",
+                    width=200,
+                    height=300,
+                    radius=20,
+                    effect="pixelate_faces:9",
+                    gravity="face")
+            # print(thumbnail_url)
+
+            user.update({
+                'first_name': user_profile['first_name'],
+                'last_name': user_profile['last_name'],
+                'phone_number': user_profile['phone_number'],
+                'address': user_profile['address'],
+                # 'email': user_profile['email'],
+                # 'username': user_profile['username'],
+
+                'city': user_profile['city'],
+                'country': user_profile['country'],
+                'postal_code': user_profile['postal_code'],
+                'bio': user_profile['bio'],
+
+                'is_farmer': user_profile['is_farmer'],
+                'is_vendor': user_profile['is_vendor'],
+                # 'is_farmer': False,
+                # 'is_vendor': False,
+
+                'profile_completed': True,
+                'image_url': thumbnail_url,
+
+                'updated': datetime.utcnow(),
+
+            })
+
+            users.save(user)
+
+            message = 'User with email ' + \
+                user_profile['email'] + ' profile updated successfully'
+            return {'message': message}, 201
+
+        return {
+            "warning":
+            "User updated profile already. Please login or register."}, 200
