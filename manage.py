@@ -1,31 +1,14 @@
 # local imports
-from src import create_app
+from src import app
 
 
 # third-party imports
-from flask_pymongo import PyMongo
-from flask_bcrypt import Bcrypt
-from flask_cors import CORS
-from flask_jwt_extended import JWTManager
-# controller class for handling commands
 from flask_script import Manager
 from decouple import config
 import unittest
-from flask_mail import Mail
 
 
-# application development instance
-config_name = config("FLASK_ENV")
-app = create_app(config_name=config_name)
-app.config.from_pyfile('settings.py')
-
-
-mongo = PyMongo(app)
-bcrypt = Bcrypt(app)
-jwt = JWTManager(app)
 manager = Manager(app)
-mail = Mail(app)
-CORS(app)
 
 
 @manager.command
@@ -42,5 +25,5 @@ def test():
 
 
 if __name__ == '__main__':
-    # app.run(debug=True)
+    # app.run()
     manager.run()

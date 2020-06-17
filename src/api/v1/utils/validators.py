@@ -86,7 +86,6 @@ def validate_reset_user_data(user):
         return {'warning': 'password requires atlest 6 characters'}, 200
 
 
-
 def validate_profile_data(user_profile):
     """this funtion validates the user data"""
     user_profile = dict(user_profile)
@@ -118,11 +117,11 @@ def validate_profile_data(user_profile):
     elif user_profile['bio'] == '' or None:
         return {'warning': 'bio is a required field'}, 200
 
-    # elif user_profile['is_farmer'] == '' or None:
-    #     return {'warning': 'is_farmer is a required field'}, 200
+    elif user_profile['is_farmer'] == '' or None:
+        return {'warning': 'user type is is_vendor or is_farmer is a required field'}, 200
 
-    # elif user_profile['is_vendor'] == '' or None:
-    #     return {'warning': 'is_vendor is a required field'}, 200
+    elif user_profile['is_vendor'] == '' or None:
+        return {'warning': 'user type is is_vendor or is_farmer is a required field'}, 200
 
     elif user_profile['image_url'] == '' or None:
         return {'warning': 'image_url is a required field'}, 200

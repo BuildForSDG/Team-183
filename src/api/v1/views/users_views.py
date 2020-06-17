@@ -37,7 +37,7 @@ Cloud.config.update = ({
 })
 
 
-@auth_ns.route("/signup")
+# @auth_ns.route("/signup")
 class RegisterUser(Resource):
 
     """Registers a new user."""
@@ -55,7 +55,7 @@ class RegisterUser(Resource):
             return invalid_data
 
         # local import
-        from manage import mongo, bcrypt
+        from src import mongo, bcrypt
         users = mongo.db.users
         user = users.find_one({'email': new_user['email']})
 
@@ -86,7 +86,7 @@ class RegisterUser(Resource):
             "User already exists. Please login or register."}, 200
 
 
-@auth_ns.route("/login")
+# @auth_ns.route("/login")
 class LoginUser(Resource):
 
     "Class for logging in a user"
@@ -100,7 +100,7 @@ class LoginUser(Resource):
         args = login_parser.parse_args()
 
         # local import
-        from manage import mongo, bcrypt
+        from src import mongo, bcrypt
         users = mongo.db.users
 
         if args["email"] and args["password"]:
@@ -131,19 +131,19 @@ class LoginUser(Resource):
                     'last_name': user['last_name'],
                     'username': user['username'],
                     'email': user['email'],
+
                     'phone_number': user['phone_number'],
                     'address': user['address'],
-
-                    'is_farmer': user['is_farmer'],
-                    'is_vendor': user['is_vendor'],
-
                     'city': user['city'],
                     'country': user['country'],
                     'postal_code': user['postal_code'],
-                    'bio': user['bio'],
 
+                    'bio': user['bio'],
+                    'image_url': user['image_url'],
+
+                    'is_farmer': user['is_farmer'],
+                    'is_vendor': user['is_vendor'],
                     'profile_completed': user['profile_completed'],
-                    'image_url': user['image_url']
                 })
 
                 return {
@@ -156,7 +156,7 @@ class LoginUser(Resource):
             "warning": "'username' and 'password' are required fields"}, 200
 
 
-@auth_ns.route("/forgot-password")
+# @auth_ns.route("/forgot-password")
 class UserForgotPassword(Resource):
 
     @auth_ns.expect(forgot_password_model)
@@ -172,7 +172,7 @@ class UserForgotPassword(Resource):
         url = host_url + 'reset'
 
         # local import
-        from manage import mongo
+        from src import mongo
         users = mongo.db.users
 
         user = users.find_one({'email': data['email']})
@@ -195,7 +195,7 @@ class UserForgotPassword(Resource):
         return {'warning': 'No user exists with that email'}, 200
 
 
-@auth_ns.route('/reset-password')
+# @auth_ns.route('/reset-password')
 class UserResetPassword(Resource):
 
     "Class for updating user password."
@@ -210,7 +210,7 @@ class UserResetPassword(Resource):
         # data = request.get_json()
 
         # # local import
-        from manage import mongo, bcrypt
+        from src import mongo, bcrypt
         users = mongo.db.users
         user = users.find_one({'email': data['email']})
 
@@ -231,7 +231,7 @@ class UserResetPassword(Resource):
                 user['email'] + '. Check your Email for updated credentials'}, 200
 
 
-@auth_ns.route("/profile")
+# @auth_ns.route("/profile")
 class LoggedInUserProfile(Resource):
 
     "Class for display and edit a logged in user profile"
@@ -252,7 +252,7 @@ class LoggedInUserProfile(Resource):
             return invalid_data
 
         # local import
-        from manage import mongo
+        from src import mongo
         users = mongo.db.users
         user = users.find_one({'email': user_profile['email']})
 
@@ -289,28 +289,40 @@ class LoggedInUserProfile(Resource):
                     radius=20,
                     effect="pixelate_faces:9",
                     gravity="face")
-            # print(thumbnail_url)
+
+            is_farmer = False
+            is_vendor = False
+            if user_profile['is_farmer'] == 'True':
+                is_farmer = True
+            if user_profile['is_vendor'] == 'True':
+                is_vendor = True
 
             user.update({
                 'first_name': user_profile['first_name'],
                 'last_name': user_profile['last_name'],
-                'phone_number': user_profile['phone_number'],
-                'address': user_profile['address'],
                 # 'email': user_profile['email'],
                 # 'username': user_profile['username'],
 
+                # 'contact_info':
+                #     {
+                #         'address': user_profile['address'],
+                #         'phone_number': user_profile['phone_number'],
+                #         'city': user_profile['city'],
+                #         'country': user_profile['country'],
+                #         'postal_code': user_profile['postal_code'],
+                #     },
+                'phone_number': user_profile['phone_number'],
+                'address': user_profile['address'],
                 'city': user_profile['city'],
                 'country': user_profile['country'],
                 'postal_code': user_profile['postal_code'],
+
                 'bio': user_profile['bio'],
-
-                'is_farmer': user_profile['is_farmer'],
-                'is_vendor': user_profile['is_vendor'],
-                # 'is_farmer': False,
-                # 'is_vendor': False,
-
-                'profile_completed': True,
                 'image_url': thumbnail_url,
+
+                'is_farmer': is_farmer,
+                'is_vendor': is_vendor,
+                'profile_completed': True,
 
                 'updated': datetime.utcnow(),
 
