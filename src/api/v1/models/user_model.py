@@ -4,6 +4,7 @@ from flask_restx import fields, Namespace
 auth_ns = Namespace(
     'auth',
     description='Authentication',
+    # path="/users",
     path="/api/v1/users"
 )
 
@@ -48,7 +49,7 @@ reset_model = auth_ns.model(
             required=True, description='email address',
             example='johndoe@gmail.com'),
         # 'old_password': fields.String(
-        #     required=True, description='old_password', example='johndoe123'),
+        #     required=False, description='old_password', example='johndoe123'),
         'password': fields.String(
             required=True, description='password', example='johndoe123'),
         'confirm': fields.String(
@@ -83,9 +84,10 @@ profile_model = auth_ns.model(
             required=True, description='bio', example='I am the worlds greatest software engineer'),
 
         'is_farmer': fields.Boolean(
-            required=True, description='is_farmer', example=True),
+            required=True, description='is_farmer', example='True'),
         'is_vendor': fields.Boolean(
-            required=True, description='is_vendor', example=False),
+            required=True, description='is_vendor', example='False'),
+
         'image_url': fields.String(
             required=False, description='upload_file', example='https://res.cloudinary.com/daniel2019/image/upload/c_fill,h_100,w_100/bxij26rdhlr6icynkd3f.jpg'),
     })

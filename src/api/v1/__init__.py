@@ -1,6 +1,13 @@
 """Application versioning."""
 # local imports
-from .views.users_views import auth_ns
+from .views.users_views import (
+    auth_ns,
+    RegisterUser,
+    LoginUser,
+    UserForgotPassword,
+    UserResetPassword,
+    LoggedInUserProfile
+)
 
 
 # third-party imports
@@ -11,7 +18,7 @@ from flask import Blueprint
 api_v1_blueprint = Blueprint(
     'api',
     __name__,
-    # url_prefix='/api/v1'
+    # url_prefix='/api/v1',
 )
 
 authorizations = {
@@ -31,8 +38,12 @@ auth_api = Api(
     doc='/'
 )
 
+
 # del auth_api.namespaces[0]
-auth_api.add_namespace(
-    auth_ns,
-    path="/api/v1/users"
-)
+auth_api.add_namespace(auth_ns)
+
+auth_ns.add_resource(RegisterUser, '/signup', endpoint='signup')
+auth_ns.add_resource(LoginUser, '/login', endpoint='login')
+auth_ns.add_resource(UserForgotPassword, '/forgot-password', endpoint='forgot-password')
+auth_ns.add_resource(UserResetPassword, '/reset-password', endpoint='reset-password')
+auth_ns.add_resource(LoggedInUserProfile, '/profile', endpoint='profile')

@@ -59,5 +59,6 @@ profile_parser.add_argument(
     'image',
     required=False,
     type=werkzeug.datastructures.FileStorage,
-    location='files'
+    # location='files',
+    location='form'
     )

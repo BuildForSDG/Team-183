@@ -1,8 +1,8 @@
 import json
 from flask_testing import TestCase
-from manage import app
+from src import app, mongo
 from instance.config import app_config
-from manage import mongo
+# from src import mongo
 
 
 class BaseTestCase(TestCase):
