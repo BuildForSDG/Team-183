@@ -8,6 +8,7 @@ from flask_cors import CORS
 from flask_mail import Mail
 from flask_jwt_extended import JWTManager
 from decouple import config
+from celery import Celery
 
 
 # application development instance
@@ -21,3 +22,9 @@ bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 CORS(app)
 mail = Mail(app)
+# celery =Celery(app)
+# celery = Celery('tasks', broker='amqp://localhost//')
+celery = Celery('tasks', broker='amqp://localhost:5672')
+
+
+# celery_class = celery()

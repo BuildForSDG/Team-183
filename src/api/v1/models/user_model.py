@@ -2,7 +2,7 @@
 from flask_restx import fields, Namespace
 
 auth_ns = Namespace(
-    'auth',
+    'Auth',
     description='Authentication',
     # path="/users",
     path="/api/v1/users"

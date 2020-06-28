@@ -21,6 +21,7 @@ pytest = "^5.4.2"
 flask_testing = "^0.8.0"
 flask_mail = "^0.9.1"
 dnspython = "^1.16.0"
+celery = "^4.4.5"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.7.9"

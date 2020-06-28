@@ -6,9 +6,11 @@ __version__ = '0.1.0'
 # local imports
 from src.api.v1 import api_v1_blueprint as v1
 from instance.config import app_config
+from .mongoflask import MongoJSONEncoder, ObjectIdConverter
 
 # third-party imports
 from flask import Flask, jsonify
+from datetime import timedelta
 
 
 def create_app(config_name):
@@ -18,8 +20,11 @@ def create_app(config_name):
 
     # initializing the app
     app = Flask(__name__)
+    app.json_encoder = MongoJSONEncoder
+    app.url_map.converters['objectid'] = ObjectIdConverter
 
     app.config.from_object(app_config[config_name])
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=1)
 
     # registering the blueprint
     app.register_blueprint(v1)
