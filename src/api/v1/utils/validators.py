@@ -91,10 +91,10 @@ def validate_profile_data(user_profile):
     user_profile = dict(user_profile)
     # Check for empty password
     if user_profile['first_name'] == '' or None:
-        return {'warning': 'first_name is a required field'}, 200
+        return {'warning': 'first name is a required field'}, 200
 
     elif user_profile['last_name'] == '' or None:
-        return {'warning': 'last_name is a required field'}, 200
+        return {'warning': 'last name is a required field'}, 200
 
     # elif user_profile['username'] == '' or None:
     #     return {'warning': 'username is a required field'}, 200
@@ -106,25 +106,27 @@ def validate_profile_data(user_profile):
         return {'warning': 'address is a required field'}, 200
 
     elif user_profile['city'] == '' or None:
-        return {'warning': 'password is a required field'}, 200
+        return {'warning': 'city is a required field'}, 200
 
     elif user_profile['country'] == '' or None:
         return {'warning': 'country is a required field'}, 200
 
     elif user_profile['postal_code'] == '' or None:
-        return {'warning': 'postal_code is a required field'}, 200
+        return {'warning': 'postal code is a required field'}, 200
 
     elif user_profile['bio'] == '' or None:
         return {'warning': 'bio is a required field'}, 200
 
     elif user_profile['is_farmer'] == '' or None:
-        return {'warning': 'user type is is_vendor or is_farmer is a required field'}, 200
+        return {
+            'warning': 'user type is_vendor or is_farmer is a required field'}, 200
 
     elif user_profile['is_vendor'] == '' or None:
-        return {'warning': 'user type is is_vendor or is_farmer is a required field'}, 200
+        return {
+            'warning': 'you must specify whether the user type is either vendor(restuarant/farmer) or customer'}, 200
 
     elif user_profile['image_url'] == '' or None:
-        return {'warning': 'image_url is a required field'}, 200
+        return {'warning': 'image url is a required field'}, 200
 
     # elif user_profile['password'] == '' or None:
     #     return {'warning': 'password is a required field'}, 200
@@ -149,4 +151,65 @@ def validate_profile_data(user_profile):
     #     return {"warning": "Enter a valid password"}, 200
 
     # elif len(user['password']) < 6:
-    #     return {'warning': 'password requires atlest 6 characters'}, 200
+    # return {'warning': 'password requires atlest 6 characters'}, 200
+
+
+def validate_product_data(product):
+    """Function validates the product data."""
+    product = dict(product)
+    # Check for empty product_name
+    if product['product_name'] == '':
+        return {'warning': 'product_name is a required field'}, 400
+
+    # Check for empty product_category
+    elif product['product_category'] == '':
+        return {'warning': 'product_category is a required field'}, 400
+
+    # check for a valid product_name
+    if product['product_name'].strip(' ').isdigit():
+        return {'warning': 'Enter a non digit product_name'}, 400
+
+    if not product["product_name"].strip():
+        return {"warning": "Enter a valid product_name"}, 400
+
+    # check for valid product_category
+    if product['product_category'].strip(' ').isdigit():
+        return {'warning': 'Enter non digit product_category'}, 400
+
+    if not product["product_category"].strip():
+        return {"warning": "Enter valid product_category"}, 400
+
+    # Check for large/long inputs
+    if len(product['product_name']) > 50:
+        return {'warning': 'product_name is too long'}, 400
+
+
+def validate_update_product(product, data):
+    """this function validates the updated product data"""
+    product = dict(product)
+    data = dict(data)
+    # Check for empty product_name
+    if data['product_name'] == '':
+        data['product_name'] = product['product_name']
+
+    # Check for empty product_category
+    if data['product_category'] == '':
+        data['product_category'] = product['product_category']
+
+    # check for a valid product_name
+    if data['product_name'].strip(' ').isdigit():
+        return {'warning': 'Enter a non digit product_name'}, 400
+
+    if not data["product_name"].strip():
+        return {"warning": "Enter a valid product_name"}, 400
+
+    # check for valid product_category
+    if data['product_category'].strip(' ').isdigit():
+        return {'warning': 'Enter non digit product_category'}, 400
+
+    if not data["product_category"].strip():
+        return {"warning": "Enter valid product_category"}, 400
+
+    # Check for large/long inputs
+    if len(data['product_name']) > 50:
+        return {'warning': 'product_name is too long'}, 400

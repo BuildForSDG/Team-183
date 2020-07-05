@@ -19,6 +19,8 @@ from ..models.user_model import (
     forgot_password_model,
     reset_model,
     profile_model)
+from ..utils.decorators import admin_token_required
+
 
 # third-party imports
 from flask_restx import Resource
@@ -28,6 +30,7 @@ from decouple import config
 import cloudinary as Cloud
 from cloudinary.uploader import upload
 from cloudinary.utils import cloudinary_url
+from flask import jsonify
 
 
 Cloud.config.update = ({
@@ -113,42 +116,57 @@ class LoginUser(Resource):
 
                     return {"warning": "Invalid password"}, 200
 
-                # print (user['profile_completed'])
+                print (user['profile_completed'])
                 if not user['profile_completed']:
 
-                    access_token = create_access_token(identity={
-                        'username': user['username'],
-                        'email': user['email'],
-                    })
+                    access_token = create_access_token(
+                        identity={
+                            'username': user['username'],
+                            'email': user['email'],
+                            "sub": user['_id'],
+
+                        },
+                        # sub=user['_id']
+                    )
                     return {
                         "message": "Logged in successfully",
                         'token': access_token,
+                        'profile_completed': user['profile_completed'],
+
                     }
 
-                access_token = create_access_token(identity={
+                access_token = create_access_token(
+                    identity={
 
-                    'first_name': user['first_name'],
-                    'last_name': user['last_name'],
-                    'username': user['username'],
-                    'email': user['email'],
+                        'first_name': user['first_name'],
+                        'last_name': user['last_name'],
+                        'username': user['username'],
+                        'email': user['email'],
 
-                    'phone_number': user['phone_number'],
-                    'address': user['address'],
-                    'city': user['city'],
-                    'country': user['country'],
-                    'postal_code': user['postal_code'],
+                        'phone_number': user['phone_number'],
+                        'address': user['address'],
+                        'city': user['city'],
+                        'country': user['country'],
+                        'postal_code': user['postal_code'],
 
-                    'bio': user['bio'],
-                    'image_url': user['image_url'],
+                        'bio': user['bio'],
+                        'image_url': user['image_url'],
 
-                    'is_farmer': user['is_farmer'],
-                    'is_vendor': user['is_vendor'],
-                    'profile_completed': user['profile_completed'],
-                })
+                        'is_farmer': user['is_farmer'],
+                        'is_vendor': user['is_vendor'],
+                        'profile_completed': user['profile_completed'],
+                        "sub": user['_id']
+                    },
+                    # sub=user['_id']
+                )
 
                 return {
                     "message": "Logged in successfully",
                     'token': access_token,
+                    'profile_completed': user['profile_completed'],
+
+                    'admin': user['is_vendor'],
+
                 }
 
             return {"warning": "No user found. Please sign up"}, 200
@@ -245,7 +263,7 @@ class LoggedInUserProfile(Resource):
         user_profile = profile_parser.parse_args()
         # file_to_upload = ''
         file_to_upload = user_profile['image']
-        print(file_to_upload)
+        # print(file_to_upload)
 
         invalid_data = validate_profile_data(user_profile)
         if invalid_data:
@@ -337,3 +355,42 @@ class LoggedInUserProfile(Resource):
         return {
             "warning":
             "User updated profile already. Please login or register."}, 200
+
+
+class AllUsers(Resource):
+    @auth_ns.response(200, 'Success')
+    # @auth_ns.marshal_with(users_resp, envelope='users')
+    # @token_required
+    @admin_token_required
+    @auth_ns.doc(security='apikey')
+    @auth_ns.header(
+        'token',
+        type=str,
+        description='access token')
+    def get(user_id, self):
+        """Gets all users from db."""
+        # local import
+        from src import mongo
+        users = mongo.db.users
+        usersx = users.find()
+
+        if not usersx:
+            auth_ns.abort(404, "No users for found")
+
+        results = []
+        for user in usersx:
+            obj = {
+                "user_id": str(user["_id"]),
+                "email": user["email"],
+                "username": user["username"],
+                # "admin": user["is_vendor"],
+                # "status": user["status"],
+                "registered_on": user["created"].strftime('%d-%b-%Y : %H:%M:%S'),
+            }
+            results.append(obj)
+
+        return jsonify(
+            {"message": "All users listed successfully",
+             "users_count": users.count(),
+             "users": results
+             })

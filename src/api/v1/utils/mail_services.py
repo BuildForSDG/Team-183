@@ -1,12 +1,15 @@
 # third party imports
-from decouple import config
 # from threading import Thread
-
+from decouple import config
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
+# local imports
+# from src import celery_class as celery
 
+
+# @celery.tasks
 def send_email(recipients, subject, html, msg):
     gmail_user = config('GMAIL_MAIL')  # email of sender account
     gmail_pwd = config('GMAIL_PASSWORD')  # password of sender account
@@ -31,6 +34,7 @@ def send_email(recipients, subject, html, msg):
         s.quit()
 
 
+# @celery.task
 def send_forgot_password_email(recipients, reset_token, url):
     """Send email with the password reset link."""
     reset_token = reset_token
@@ -45,6 +49,7 @@ def send_forgot_password_email(recipients, reset_token, url):
     send_email(recipients, subject, html, msg)
 
 
+# @celery.task
 def send_confirm_reset_password_email(recipients, new_password):
     """Send email with the new reset password."""
     new_password = new_password
