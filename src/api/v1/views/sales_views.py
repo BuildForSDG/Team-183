@@ -107,7 +107,7 @@ class SaleList(Resource):
     @sale_ns.doc("list_sales")
     @sale_ns.response(404, "Sales Not Found")
     # @sale_ns.marshal_list_with(sales, envelope="sales")
-    @admin_token_required
+    # @admin_token_required
     @token_required
     @sale_ns.doc(security='apikey')
     @sale_ns.header(
